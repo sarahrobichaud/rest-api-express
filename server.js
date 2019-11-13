@@ -1,7 +1,7 @@
 const express = require('express');
 const colors = require('colors');
 const dotenv = require('dotenv').config({ path: './config/config.env' });
-const mongoose = require('mongoose');
+const errorHandler = require('./middleware/error');
 const morgan = require('morgan');
 const connectDB = require('./config/db');
 const cors = require('cors');
@@ -10,9 +10,12 @@ const app = express();
 //Middleware
 app.use(express.json());
 app.use(cors());
-
 //Logger
 if (process.env.NODE_ENV === 'development') app.use(morgan('dev'));
+//Routes
+const usersRoute = require('./routes/users');
+app.use('/api/v1/users', usersRoute);
+app.use(errorHandler);
 
 //Server
 const PORT = process.env.PORT || 2000;
@@ -33,7 +36,3 @@ process.on('unhandledRejection', (err, promise) => {
   //Close server & exit process
   server.close(() => process.exit(1));
 });
-
-//Routes
-const usersRoute = require('./routes/users');
-app.use('/api/v1/users', usersRoute);
