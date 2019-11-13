@@ -28,6 +28,12 @@ const server = app.listen(PORT, () =>
 //Connection to database
 connectDB();
 
+process.on('unhandledRejection', (err, promise) => {
+  console.log(`Error: ${err.message}`);
+  //Close server & exit process
+  server.close(() => process.exit(1));
+});
+
 //Routes
 const usersRoute = require('./routes/users');
 app.use('/api/v1/users', usersRoute);
