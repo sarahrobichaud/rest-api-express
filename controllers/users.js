@@ -9,7 +9,13 @@ exports.getUsers = (req, res, next) => {
 // @route   GET /api/v1/users
 // @access  Public
 exports.getUser = (req, res, next) => {
-  res.status(200).json({ success: true, message: 'Get a single user' });
+  res.status(200).json({
+    success: true,
+    message: 'Get a single user',
+    data: {
+      id: req.params.id
+    }
+  });
 };
 
 // @desc    Create a new user
@@ -30,5 +36,5 @@ exports.updateUser = (req, res, next) => {
 // @route   DELETE /api/v1/users
 // @access  Private
 exports.deleteUser = (req, res, next) => {
-  res.status(200).json({ success: true, message: 'Delete User' });
+  res.status(204).json({ success: true, message: 'Delete User' });
 };
