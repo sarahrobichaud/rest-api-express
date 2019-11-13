@@ -3,24 +3,52 @@ const mongoose = require('mongoose');
 const UserSchema = new mongoose.Schema({
   username: {
     type: String,
-    required: true
+    required: [true, 'Please enter a username'],
+    unique: true,
+    trim: true,
+    maxlength: [20, 'Username cannot be more than 20 caracters']
   },
+
   password: {
     type: String,
-    required: true
+    required: [true, 'Please enter a password'],
+    trim: true
   },
-  inventory: {
+  slug: String,
+  stats: {
     tokens: {
       type: Number,
-      default: 10000,
+      default: 50000,
       required: true
     },
-
-    award: {
-      type: Array
+    averageWinnings: {
+      type: Number,
+      default: 0,
+      required: true
+    },
+    totalHands: {
+      type: Number,
+      default: 0,
+      required: true
+    },
+    totalWon: {
+      type: String,
+      default: 0,
+      required: true
+    },
+    lastGames: {
+      type: [Object],
+      default: [],
+      required: true
+    },
+    awards: {
+      type: [Object],
+      default: [],
+      required: true
     }
   },
-  date: {
+
+  createdAt: {
     type: Date,
     default: Date.now
   }
