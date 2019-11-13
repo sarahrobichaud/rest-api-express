@@ -1,11 +1,14 @@
 const mongoose = require('mongoose');
+const uniqueValidator = require('mongoose-unique-validator');
+const slugify = require('slugify');
 
 const UserSchema = new mongoose.Schema({
   username: {
     type: String,
     required: [true, 'Please enter a username'],
-    unique: true,
     trim: true,
+    unique: true,
+    uniqueCaseInsensitive: true,
     maxlength: [20, 'Username cannot be more than 20 caracters']
   },
 
@@ -52,6 +55,16 @@ const UserSchema = new mongoose.Schema({
     type: Date,
     default: Date.now
   }
+});
+
+//Create user slug from username
+UserSchema.pre('save', function(next) {
+  this.slug = slugify(this.username, { lower: true });
+  next();
+});
+
+UserSchema.plugin(uniqueValidator, {
+  message: 'Username already in use'
 });
 
 module.exports = mongoose.model('Users', UserSchema, 'users');

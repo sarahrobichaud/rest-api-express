@@ -17,7 +17,7 @@ exports.getUsers = asyncHandler(async (req, res, next) => {
 });
 
 // @desc    Get a single user
-// @route   GET /api/v1/users
+// @route   GET /api/v1/users/:id
 // @access  Public
 exports.getUser = asyncHandler(async (req, res, next) => {
   const user = await User.findById(req.params.id);
@@ -51,7 +51,7 @@ exports.createUser = asyncHandler(async (req, res, next) => {
 });
 
 // @desc    Create a new user
-// @route   PUT /api/v1/users
+// @route   PUT /api/v1/users/:id
 // @access  Private
 exports.updateUser = asyncHandler(async (req, res, next) => {
   const user = await User.findByIdAndUpdate(req.params.id, req.body, {
@@ -73,7 +73,7 @@ exports.updateUser = asyncHandler(async (req, res, next) => {
 });
 
 // @desc    Delete a user
-// @route   DELETE /api/v1/users
+// @route   DELETE /api/v1/users/:id
 // @access  Private
 exports.deleteUser = asyncHandler(async (req, res, next) => {
   try {
