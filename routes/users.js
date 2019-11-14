@@ -8,6 +8,12 @@ const {
   deleteUser
 } = require('../controllers/users');
 
+//Include other resource routers
+const statRouter = require('./stats');
+
+// Re-routing
+router.use('/:userId/stats', statRouter);
+
 router
   .route('/')
   .get(getUsers)

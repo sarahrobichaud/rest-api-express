@@ -25,7 +25,7 @@ exports.getUsers = asyncHandler(async (req, res, next) => {
     match => `$${match}`
   );
 
-  query = User.find(JSON.parse(queryString));
+  query = User.find(JSON.parse(queryString)).populate('stats');
 
   //Selection
   if (req.query.select) {
@@ -141,7 +141,7 @@ exports.updateUser = asyncHandler(async (req, res, next) => {
 // @access  Private
 exports.deleteUser = asyncHandler(async (req, res, next) => {
   try {
-    const user = await User.findByIdAndDelete(req.params.id);
+    const user = await User.findById(req.params.id);
 
     //Handle non-existant id with correct format
     if (!user) {
@@ -149,6 +149,8 @@ exports.deleteUser = asyncHandler(async (req, res, next) => {
         new ErrorResponse(`Bootcamp not found with id of ${err.value}`, 404)
       );
     }
+
+    user.remove();
     res.status(200).json({
       success: true,
       message: `successfully deleted user ${req.params.id}`

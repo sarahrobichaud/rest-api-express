@@ -16,6 +16,7 @@ if (process.env.NODE_ENV === 'development') app.use(morgan('dev'));
 
 //Routes
 const usersRoute = require('./routes/users');
+const statsRoute = require('./routes/stats');
 app.use('/api/v1/users', usersRoute);
 app.use(errorHandler);
 
