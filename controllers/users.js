@@ -8,12 +8,13 @@ const User = require('../models/User');
 
 //TODO: Destructure reqQuery.
 //TODO: Add custom query messages.
+//TODO: Builds pagination links.
 exports.getUsers = asyncHandler(async (req, res, next) => {
   let query;
   const reqQuery = { ...req.query };
 
-  //Exclude fields
-  const exclusions = ['select', 'sort'];
+  //Exclude those fields
+  const exclusions = ['select', 'sort', 'page', 'limit'];
 
   //Loop over exclusions and remove them from reqQuery
   exclusions.forEach(param => delete reqQuery[param]);
@@ -39,13 +40,42 @@ exports.getUsers = asyncHandler(async (req, res, next) => {
   } else {
     query = query.sort('-stats.tokens'); //Sort by user's tokens
   }
+
+  //Pagination
+  const page = parseInt(req.query.page, 10) || 1;
+  const limit = parseInt(req.query.limit) || 15;
+  const offset = (page - 1) * limit;
+  const end = page * limit;
+  const total = await User.countDocuments();
+
+  //Limit
+  query = query.skip(offset).limit(limit);
+
   //Execute query
   const users = await query;
+
+  //Pagination results
+  const pagination = {};
+
+  if (end < total) {
+    pagination.next = {
+      page: page + 1,
+      limit
+    };
+  }
+
+  if (offset > 0) {
+    pagination.prev = {
+      page: page - 1,
+      limit
+    };
+  }
 
   res.status(200).json({
     success: true,
     message: 'All users',
     count: users.length,
+    pagination,
     data: users
   });
 });
