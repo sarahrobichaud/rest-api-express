@@ -10,8 +10,10 @@ const app = express();
 //Middleware
 app.use(express.json());
 app.use(cors());
+
 //Logger
 if (process.env.NODE_ENV === 'development') app.use(morgan('dev'));
+
 //Routes
 const usersRoute = require('./routes/users');
 app.use('/api/v1/users', usersRoute);

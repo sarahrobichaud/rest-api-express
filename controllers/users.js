@@ -5,8 +5,42 @@ const User = require('../models/User');
 // @desc    Get all users
 // @route   GET /api/v1/users
 // @access  Public
+
+//TODO: Destructure reqQuery.
+//TODO: Add custom query messages.
 exports.getUsers = asyncHandler(async (req, res, next) => {
-  const users = await User.find();
+  let query;
+  const reqQuery = { ...req.query };
+
+  //Exclude fields
+  const exclusions = ['select', 'sort'];
+
+  //Loop over exclusions and remove them from reqQuery
+  exclusions.forEach(param => delete reqQuery[param]);
+
+  //Create querystring and prepend $ to operators (gt, gte, ect..)
+  let queryString = JSON.stringify(reqQuery).replace(
+    /\b(gt|gte|lt|lte|in)/g,
+    match => `$${match}`
+  );
+
+  query = User.find(JSON.parse(queryString));
+
+  //Selection
+  if (req.query.select) {
+    const fields = req.query.select.split(',').join(' ');
+    query = query.select(fields);
+  }
+  //Sorting
+  if (req.query.sort) {
+    const sortBy = req.query.sort.split(',').join(' ');
+    console.log(sortBy);
+    query = query.sort(sortBy);
+  } else {
+    query = query.sort('-stats.tokens'); //Sort by user's tokens
+  }
+  //Execute query
+  const users = await query;
 
   res.status(200).json({
     success: true,
