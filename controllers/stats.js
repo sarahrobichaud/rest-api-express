@@ -7,6 +7,7 @@ const Stat = require('../models/Stat');
 // @route   GET /api/v1/users/:userId/stats
 // @access  Public
 exports.getStat = asyncHandler(async (req, res, next) => {
+  let query;
   const user = await User.findById(req.params.userId);
   if (!user) {
     return next(
@@ -14,19 +15,38 @@ exports.getStat = asyncHandler(async (req, res, next) => {
       404
     );
   }
-  const stat = await Stat.find({ user: user._id }).populate({
+
+  //Duplicate query
+  const reqQuery = { ...req.query };
+
+  //Set exclusions and remove them from query.
+  const exclusions = ['select'];
+  exclusions.forEach(param => delete reqQuery[param]);
+
+  //Find stats of specified user.
+  query = Stat.find({ user: user._id }).populate({
     path: 'user',
     select: 'username'
   });
-  res.status(200).json(stat);
+
+  //Selection
+  if (req.query.select) {
+    const fields = req.query.select.split(',').join(' ');
+
+    query = query.select(fields);
+  }
+
+  const stat = await query;
+  res
+    .status(200)
+    .json({ success: true, message: `Stats of user ${user._id}`, data: stat });
 });
 
-// @desc    Get stats of a user.
+// @desc    Initialise the stats a user.
 // @route   POST /api/v1/users/:userId/stats
 // @access  Private
 exports.initStat = asyncHandler(async (req, res, next) => {
   req.body.user = req.params.userId;
-  console.log(req.params);
 
   const user = await User.findById(req.params.userId);
   if (!user) {
@@ -36,6 +56,7 @@ exports.initStat = asyncHandler(async (req, res, next) => {
     );
   }
 
+  //Initialise base stats
   const baseStats = {
     tokens: 150000,
     averageWinnings: 0,
@@ -44,6 +65,8 @@ exports.initStat = asyncHandler(async (req, res, next) => {
     awards: []
   };
 
+  // Create a document with the initial stats and
+  // the userId attached to it.
   const stat = await Stat.create({
     user: req.body.user,
     ...baseStats
@@ -55,7 +78,6 @@ exports.initStat = asyncHandler(async (req, res, next) => {
 // @route   PUT /api/v1/users/:userId/stats
 // @access  Private
 exports.updateStat = asyncHandler(async (req, res, next) => {
-  console.log(req.params.userId);
   const user = await User.findById(req.params.userId).populate('stats');
   if (!user) {
     return next(
@@ -68,5 +90,9 @@ exports.updateStat = asyncHandler(async (req, res, next) => {
     new: true,
     runValidators: true
   });
-  res.status(200).json(stat);
+  res.status(200).json({
+    success: true,
+    message: `Updated stats of user ${user._id}`,
+    data: stat
+  });
 });

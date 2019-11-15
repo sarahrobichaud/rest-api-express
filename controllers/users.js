@@ -8,7 +8,7 @@ const User = require('../models/User');
 
 //TODO: Destructure reqQuery.
 //TODO: Add custom query messages.
-//TODO: Builds pagination links.
+//TODO: Build pagination links.
 exports.getUsers = asyncHandler(async (req, res, next) => {
   let query;
   const reqQuery = { ...req.query };
@@ -35,7 +35,6 @@ exports.getUsers = asyncHandler(async (req, res, next) => {
   //Sorting
   if (req.query.sort) {
     const sortBy = req.query.sort.split(',').join(' ');
-    console.log(sortBy);
     query = query.sort(sortBy);
   } else {
     query = query.sort('-stats.tokens'); //Sort by user's tokens
@@ -104,10 +103,20 @@ exports.createUser = asyncHandler(async (req, res, next) => {
   try {
     const user = await User.create(req.body);
 
+    //Remove password for frontend
+    const { _id, username, createdAt, __V, id } = user;
+    const publicUser = {
+      _id,
+      username,
+      createdAt,
+      __V,
+      id
+    };
+
     res.status(201).json({
       success: true,
       message: 'Created a new user',
-      data: user
+      data: publicUser
     });
   } catch (err) {
     next(err);
