@@ -1,8 +1,10 @@
+const path = require('path');
 const express = require('express');
 const colors = require('colors');
 const dotenv = require('dotenv').config({ path: './config/config.env' });
 const errorHandler = require('./middleware/error');
 const morgan = require('morgan');
+const fileupload = require('express-fileupload');
 const connectDB = require('./config/db');
 const cors = require('cors');
 const app = express();
@@ -10,10 +12,13 @@ const app = express();
 //Middleware
 app.use(express.json());
 app.use(cors());
+app.use(fileupload());
 
 //Logger
 if (process.env.NODE_ENV === 'development') app.use(morgan('dev'));
 
+//Set static folder
+app.use(express.static(path.join(__dirname, 'public')));
 //Routes
 const usersRoute = require('./routes/users');
 const statsRoute = require('./routes/stats');

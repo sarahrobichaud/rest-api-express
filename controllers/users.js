@@ -1,3 +1,4 @@
+const path = require('path');
 const ErrorResponse = require('../utils/errorResponse');
 const asyncHandler = require('../middleware/async');
 const User = require('../models/User');
@@ -167,4 +168,44 @@ exports.deleteUser = asyncHandler(async (req, res, next) => {
   } catch (err) {
     next(err);
   }
+});
+
+// @desc    Upload avatar
+// @route   PUT /api/v1/users/:userId/avatar
+// @access  Private
+exports.uploadUserAvatar = asyncHandler(async (req, res, next) => {
+  const user = await User.findById(req.params.userId);
+  if (!user) {
+    return next(
+      new ErrorResponse(`No user with an id of ${req.params.userId}`, 404)
+    );
+  }
+  if (!req.files) {
+    return next(new ErrorResponse('Please upload a file', 400));
+  }
+  const file = req.files.file;
+
+  //Check if file is of type image
+  if (!file.mimetype.startsWith('image/')) {
+    return next(new ErrorResponse('Please upload an image', 400));
+  }
+
+  // Check file size
+  if (!file.size > process.env.MAX_FILE_UPLOAD) {
+    return next(new ErrorResponse('Please upload an image less than 1MB', 400));
+  }
+
+  // Create custom file name
+  file.name = `avatar_${req.params.userId}${path.parse(file.name).ext}`;
+  file.mv(`${process.env.FILE_UPLOAD_PATH}/${file.name}`, async err => {
+    if (err) {
+      return next(
+        new ErrorResponse('Something went wrong with your file upload', 500)
+      );
+    }
+    await User.findByIdAndUpdate(req.params.userId, { avatar: file.name });
+  });
+  res
+    .status(200)
+    .json({ success: true, message: 'Avatar uploaded', data: file.name });
 });

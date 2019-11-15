@@ -5,7 +5,8 @@ const {
   getUser,
   createUser,
   updateUser,
-  deleteUser
+  deleteUser,
+  uploadUserAvatar
 } = require('../controllers/users');
 
 //Include other resource routers
@@ -13,6 +14,8 @@ const statRouter = require('./stats');
 
 // Re-routing
 router.use('/:userId/stats', statRouter);
+
+router.route('/:userId/avatar').put(uploadUserAvatar);
 
 router
   .route('/')
