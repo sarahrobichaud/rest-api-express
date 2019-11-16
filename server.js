@@ -4,6 +4,7 @@ const colors = require('colors');
 const dotenv = require('dotenv').config({ path: './config/config.env' });
 const errorHandler = require('./middleware/error');
 const morgan = require('morgan');
+const cookieParser = require('cookie-parser');
 const fileupload = require('express-fileupload');
 const connectDB = require('./config/db');
 const cors = require('cors');
@@ -13,6 +14,7 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 app.use(fileupload());
+app.use(cookieParser());
 
 //Logger
 if (process.env.NODE_ENV === 'development') app.use(morgan('dev'));

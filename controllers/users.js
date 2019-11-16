@@ -19,7 +19,7 @@ exports.getUser = asyncHandler(async (req, res, next) => {
   //Handle non-existant id with correct format
   if (!user) {
     return next(
-      new ErrorResponse(`Bootcamp not found with id of ${err.value}`, 404)
+      new ErrorResponse(`User not found with id of ${err.value}`, 404)
     );
   }
   res
@@ -53,7 +53,7 @@ exports.updateUser = asyncHandler(async (req, res, next) => {
   //Handle non-existant id with correct format
   if (!user) {
     return next(
-      new ErrorResponse(`Bootcamp not found with id of ${err.value}`, 404)
+      new ErrorResponse(`User not found with id of ${err.value}`, 404)
     );
   }
   res.status(200).json({
@@ -72,7 +72,7 @@ exports.deleteUser = asyncHandler(async (req, res, next) => {
   //Handle non-existant id with correct format
   if (!user) {
     return next(
-      new ErrorResponse(`Bootcamp not found with id of ${err.value}`, 404)
+      new ErrorResponse(`User not found with id of ${req.params.id}`, 404)
     );
   }
 
