@@ -13,5 +13,3 @@ router
   .put(protect, updateStat);
 
 module.exports = router;
-
-// Was working on advancedResults middleware

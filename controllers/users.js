@@ -41,13 +41,14 @@ exports.createUser = asyncHandler(async (req, res, next) => {
   });
 });
 
-// @desc    Create a new user
+// @desc    Update a new user
 // @route   PUT /api/v1/users/:id
 // @access  Private
 exports.updateUser = asyncHandler(async (req, res, next) => {
   const user = await User.findByIdAndUpdate(req.params.id, req.body, {
     new: true,
-    runValidators: true
+    runValidators: true,
+    context: 'query'
   });
 
   //Handle non-existant id with correct format

@@ -12,7 +12,7 @@ const {
 const User = require('../models/User');
 const advancedResults = require('../middleware/advancedResults');
 
-const { protect } = require('../middleware/auth');
+const { protect, authorize } = require('../middleware/auth');
 
 //Include other resource routers
 const statRouter = require('./stats');
@@ -25,12 +25,12 @@ router.route('/:userId/avatar').put(uploadUserAvatar);
 router
   .route('/')
   .get(advancedResults(User, 'stats'), getUsers)
-  .post(protect, createUser);
+  .post(protect, authorize('admin'), createUser);
 
 router
   .route('/:id')
   .get(getUser)
-  .put(protect, updateUser)
-  .delete(protect, deleteUser);
+  .put(protect, authorize('admin'), updateUser)
+  .delete(protect, authorize('admin'), deleteUser);
 
 module.exports = router;
