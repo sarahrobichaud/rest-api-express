@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const uniqueValidator = require('mongoose-unique-validator');
 const slugify = require('slugify');
 const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 
 const UserSchema = new mongoose.Schema(
   {
@@ -58,6 +59,17 @@ UserSchema.pre('save', async function(next) {
   this.password = await bcrypt.hash(this.password, salt);
   next();
 });
+
+// Verify password
+UserSchema.methods.verifyPassword = async function(enteredPassword) {
+  return await bcrypt.compare(enteredPassword, this.password);
+};
+// Get jwt token
+UserSchema.methods.getSignedJwtToken = function() {
+  return jwt.sign({ id: this._id }, process.env.JWT_SECRET, {
+    expiresIn: process.env.JWT_EXPIRE
+  });
+};
 
 //Delete user stats on deletion of user.
 UserSchema.pre('remove', async function(next) {
