@@ -9,6 +9,9 @@ const {
   uploadUserAvatar
 } = require('../controllers/users');
 
+const User = require('../models/User');
+const advancedResults = require('../middleware/advancedResults');
+
 //Include other resource routers
 const statRouter = require('./stats');
 
@@ -19,7 +22,7 @@ router.route('/:userId/avatar').put(uploadUserAvatar);
 
 router
   .route('/')
-  .get(getUsers)
+  .get(advancedResults(User, 'stats'), getUsers)
   .post(createUser);
 
 router

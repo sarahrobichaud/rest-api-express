@@ -7,7 +7,7 @@ const Stat = require('../models/Stat');
 // @route   GET /api/v1/users/:userId/stats
 // @access  Public
 exports.getStat = asyncHandler(async (req, res, next) => {
-  let query;
+  // let query;
   const user = await User.findById(req.params.userId);
   if (!user) {
     return next(
@@ -16,30 +16,32 @@ exports.getStat = asyncHandler(async (req, res, next) => {
     );
   }
 
-  //Duplicate query
-  const reqQuery = { ...req.query };
+  res.status(200).json(res.advancedResults);
 
-  //Set exclusions and remove them from query.
-  const exclusions = ['select'];
-  exclusions.forEach(param => delete reqQuery[param]);
+  // //Duplicate query
+  // const reqQuery = { ...req.query };
 
-  //Find stats of specified user.
-  query = Stat.find({ user: user._id }).populate({
-    path: 'user',
-    select: 'username'
-  });
+  // //Set exclusions and remove them from query.
+  // const exclusions = ['select'];
+  // exclusions.forEach(param => delete reqQuery[param]);
 
-  //Selection
-  if (req.query.select) {
-    const fields = req.query.select.split(',').join(' ');
+  // //Find stats of specified user.
+  // query = Stat.find({ user: user._id }).populate({
+  //   path: 'user',
+  //   select: 'username'
+  // });
 
-    query = query.select(fields);
-  }
+  // //Selection
+  // if (req.query.select) {
+  //   const fields = req.query.select.split(',').join(' ');
 
-  const stat = await query;
-  res
-    .status(200)
-    .json({ success: true, message: `Stats of user ${user._id}`, data: stat });
+  //   query = query.select(fields);
+  // }
+
+  // const stat = await query;
+  // res
+  //   .status(200)
+  //   .json({ success: true, message: `Stats of user ${user._id}`, data: stat });
 });
 
 // @desc    Initialise the stats a user.
