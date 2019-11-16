@@ -6,10 +6,6 @@ const User = require('../models/User');
 // @desc    Get all users
 // @route   GET /api/v1/users
 // @access  Public
-
-//TODO: Destructure reqQuery.
-//TODO: Add custom query messages.
-//TODO: Build pagination links.
 exports.getUsers = asyncHandler(async (req, res, next) => {
   res.status(200).json(res.advancedResults);
 });
@@ -35,27 +31,14 @@ exports.getUser = asyncHandler(async (req, res, next) => {
 // @route   POST /api/v1/users
 // @access  Private
 exports.createUser = asyncHandler(async (req, res, next) => {
-  try {
-    const user = await User.create(req.body);
+  let { username, password } = req.body;
+  const user = await User.create({ username, password });
 
-    //Remove password for frontend
-    const { _id, username, createdAt, __V, id } = user;
-    const publicUser = {
-      _id,
-      username,
-      createdAt,
-      __V,
-      id
-    };
-
-    res.status(201).json({
-      success: true,
-      message: 'Created a new user',
-      data: publicUser
-    });
-  } catch (err) {
-    next(err);
-  }
+  res.status(201).json({
+    success: true,
+    message: 'Created a new user',
+    data: user
+  });
 });
 
 // @desc    Create a new user
@@ -84,24 +67,20 @@ exports.updateUser = asyncHandler(async (req, res, next) => {
 // @route   DELETE /api/v1/users/:id
 // @access  Private
 exports.deleteUser = asyncHandler(async (req, res, next) => {
-  try {
-    const user = await User.findById(req.params.id);
+  const user = await User.findById(req.params.id);
 
-    //Handle non-existant id with correct format
-    if (!user) {
-      return next(
-        new ErrorResponse(`Bootcamp not found with id of ${err.value}`, 404)
-      );
-    }
-
-    user.remove();
-    res.status(200).json({
-      success: true,
-      message: `successfully deleted user ${req.params.id}`
-    });
-  } catch (err) {
-    next(err);
+  //Handle non-existant id with correct format
+  if (!user) {
+    return next(
+      new ErrorResponse(`Bootcamp not found with id of ${err.value}`, 404)
+    );
   }
+
+  user.remove();
+  res.status(200).json({
+    success: true,
+    message: `successfully deleted user ${req.params.id}`
+  });
 });
 
 // @desc    Upload avatar

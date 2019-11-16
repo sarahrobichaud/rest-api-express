@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const uniqueValidator = require('mongoose-unique-validator');
 const slugify = require('slugify');
+const bcrypt = require('bcryptjs');
 
 const UserSchema = new mongoose.Schema(
   {
@@ -16,7 +17,13 @@ const UserSchema = new mongoose.Schema(
     password: {
       type: String,
       required: [true, 'Please enter a password'],
-      trim: true
+      select: false
+    },
+    resetPasswordToken: String,
+    resetPasswordExpire: Date,
+    role: {
+      type: String,
+      default: 'user'
     },
     slug: String,
 
@@ -42,6 +49,13 @@ UserSchema.virtual('stats', {
 //Create user slug from username
 UserSchema.pre('save', function(next) {
   this.slug = slugify(this.username, { lower: true });
+  next();
+});
+
+//Encrypt password
+UserSchema.pre('save', async function(next) {
+  const salt = await bcrypt.genSalt(10);
+  this.password = await bcrypt.hash(this.password, salt);
   next();
 });
 

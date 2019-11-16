@@ -19,10 +19,13 @@ if (process.env.NODE_ENV === 'development') app.use(morgan('dev'));
 
 //Set static folder
 app.use(express.static(path.join(__dirname, 'public')));
+
 //Routes
 const usersRoute = require('./routes/users');
 const statsRoute = require('./routes/stats');
+const authRoute = require('./routes/auth');
 app.use('/api/v1/users', usersRoute);
+app.use('/api/v1/auth', authRoute);
 app.use(errorHandler);
 
 //Server

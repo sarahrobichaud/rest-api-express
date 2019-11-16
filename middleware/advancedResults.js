@@ -1,3 +1,6 @@
+//TODO: Destructure reqQuery.
+//TODO: Add custom query messages.
+//TODO: Build pagination links.
 const advancedResults = (model, populateWith) => async (req, res, next) => {
   let query;
   const reqQuery = { ...req.query };

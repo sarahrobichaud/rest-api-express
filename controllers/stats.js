@@ -17,31 +17,6 @@ exports.getStat = asyncHandler(async (req, res, next) => {
   }
 
   res.status(200).json(res.advancedResults);
-
-  // //Duplicate query
-  // const reqQuery = { ...req.query };
-
-  // //Set exclusions and remove them from query.
-  // const exclusions = ['select'];
-  // exclusions.forEach(param => delete reqQuery[param]);
-
-  // //Find stats of specified user.
-  // query = Stat.find({ user: user._id }).populate({
-  //   path: 'user',
-  //   select: 'username'
-  // });
-
-  // //Selection
-  // if (req.query.select) {
-  //   const fields = req.query.select.split(',').join(' ');
-
-  //   query = query.select(fields);
-  // }
-
-  // const stat = await query;
-  // res
-  //   .status(200)
-  //   .json({ success: true, message: `Stats of user ${user._id}`, data: stat });
 });
 
 // @desc    Initialise the stats a user.
