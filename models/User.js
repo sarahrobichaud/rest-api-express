@@ -8,6 +8,15 @@ const colors = require('colors');
 
 const UserSchema = new mongoose.Schema(
   {
+    email: {
+      type: String,
+      unique: true,
+      required: [true, 'Please enter an email address'],
+      match: [
+        /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
+        'Please enter a valid email address'
+      ]
+    },
     username: {
       type: String,
       required: [true, 'Please enter a username'],

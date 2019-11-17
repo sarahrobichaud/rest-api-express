@@ -31,8 +31,8 @@ exports.getUser = asyncHandler(async (req, res, next) => {
 // @route   POST /api/v1/users
 // @access  Private
 exports.createUser = asyncHandler(async (req, res, next) => {
-  let { username, password } = req.body;
-  const user = await User.create({ username, password });
+  let { email, username, password } = req.body;
+  const user = await User.create({ email, username, password });
 
   user.initNewUserStats();
 

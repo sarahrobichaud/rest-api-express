@@ -7,9 +7,10 @@ const bcrypt = require('bcryptjs');
 // @route    POST /api/v1/auth/register
 // @access   Public
 exports.register = asyncHandler(async (req, res, next) => {
-  let { username, password } = req.body;
+  let { email, username, password } = req.body;
 
   const user = await User.create({
+    email,
     username,
     password
   });
