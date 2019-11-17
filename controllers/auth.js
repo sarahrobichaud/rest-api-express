@@ -14,6 +14,8 @@ exports.register = asyncHandler(async (req, res, next) => {
     password
   });
 
+  user.initNewUserStats();
+
   sendTokenResponse(user, 200, res);
 });
 

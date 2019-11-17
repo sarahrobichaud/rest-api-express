@@ -3,6 +3,8 @@ const uniqueValidator = require('mongoose-unique-validator');
 const slugify = require('slugify');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const Stat = require('./Stat');
+const colors = require('colors');
 
 const UserSchema = new mongoose.Schema(
   {
@@ -69,6 +71,28 @@ UserSchema.methods.getSignedJwtToken = function() {
   return jwt.sign({ id: this._id }, process.env.JWT_SECRET, {
     expiresIn: process.env.JWT_EXPIRE
   });
+};
+
+//Initialize stats
+UserSchema.methods.initNewUserStats = async function() {
+  console.log(
+    `Initializing stats for user ${this._id} (${this.username})`.yellow
+  );
+  // Base stats
+  const baseStats = {
+    tokens: 150000,
+    averageWinnings: 0,
+    totalHands: 0,
+    lastGames: [],
+    awards: []
+  };
+  // Create a document with the initial stats and
+  // the userId attached to it.
+  await Stat.create({
+    user: this._id,
+    ...baseStats
+  });
+  console.log(`Done initializing stats for user ${this._id}`.green);
 };
 
 //Delete user stats on deletion of user.

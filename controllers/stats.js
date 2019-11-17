@@ -19,38 +19,6 @@ exports.getStat = asyncHandler(async (req, res, next) => {
   res.status(200).json(res.advancedResults);
 });
 
-// @desc    Initialise the stats a user.
-// @route   POST /api/v1/users/:userId/stats
-// @access  Private
-exports.initStat = asyncHandler(async (req, res, next) => {
-  req.body.user = req.params.userId;
-
-  const user = await User.findById(req.params.userId);
-  if (!user) {
-    return next(
-      new ErrorResponse(`No user with an id of ${req.params.userId}`),
-      404
-    );
-  }
-
-  //Initialise base stats
-  const baseStats = {
-    tokens: 150000,
-    averageWinnings: 0,
-    totalHands: 0,
-    lastGames: [],
-    awards: []
-  };
-
-  // Create a document with the initial stats and
-  // the userId attached to it.
-  const stat = await Stat.create({
-    user: req.body.user,
-    ...baseStats
-  });
-  res.status(201).json(stat);
-});
-
 // @desc    Update stats of a user.
 // @route   PUT /api/v1/users/:userId/stats
 // @access  Private

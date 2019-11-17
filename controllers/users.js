@@ -34,6 +34,8 @@ exports.createUser = asyncHandler(async (req, res, next) => {
   let { username, password } = req.body;
   const user = await User.create({ username, password });
 
+  user.initNewUserStats();
+
   res.status(201).json({
     success: true,
     message: 'Created a new user',
