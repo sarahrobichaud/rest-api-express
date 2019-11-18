@@ -25,7 +25,6 @@ exports.protect = asyncHandler(async (req, res, next) => {
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     req.user = await User.findById(decoded.id);
-    console.log(req.user);
     next();
   } catch (err) {
     next(new errorResponse('Not authorized', 401));
