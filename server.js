@@ -4,7 +4,12 @@ const colors = require('colors');
 const dotenv = require('dotenv').config({ path: './config/config.env' });
 const errorHandler = require('./middleware/error');
 const morgan = require('morgan');
+const xxsClean = require('xss-clean');
+const helmet = require('helmet');
+const rateLimit = require('express-rate-limit');
+const hpp = require('hpp');
 const cookieParser = require('cookie-parser');
+const mongoSanitize = require('express-mongo-sanitize');
 const fileupload = require('express-fileupload');
 const connectDB = require('./config/db');
 const cors = require('cors');
@@ -15,6 +20,20 @@ app.use(express.json());
 app.use(cors());
 app.use(fileupload());
 app.use(cookieParser());
+
+//Security
+app.use(mongoSanitize());
+app.use(helmet());
+app.use(xxsClean());
+app.use(hpp());
+
+//Rate limiting
+const limiter = rateLimit({
+  windowMs: 10 * 60 * 1000, //10 mins
+  max: 100
+});
+
+app.use(limiter);
 
 //Logger
 if (process.env.NODE_ENV === 'development') app.use(morgan('dev'));
