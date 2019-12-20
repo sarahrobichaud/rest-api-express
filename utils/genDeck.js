@@ -44,6 +44,18 @@ const genCards = options => {
             card.name = item.name;
           }
         });
+        if (
+          card.value === 1 ||
+          card.value === 11 ||
+          card.value === 12 ||
+          card.value === 13
+        ) {
+          if (card.value === 1) {
+            card.value = [1, 11];
+          } else {
+            card.value = 10;
+          }
+        }
 
         set.push(card);
       }
